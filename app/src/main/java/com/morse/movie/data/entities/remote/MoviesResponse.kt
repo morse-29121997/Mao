@@ -1,7 +1,8 @@
-package com.morse.movie.data.entities
+package com.morse.movie.data.entities.remote
 
 
 import com.google.gson.annotations.SerializedName
+import com.morse.movie.utils.Constants
 
 data class MoviesResponse(
     @SerializedName("page")
@@ -12,7 +13,7 @@ data class MoviesResponse(
     val totalPages: Int = 0, // 35201
     @SerializedName("total_results")
     val totalResults: Int = 0 // 704010
-)  {
+) {
 
     data class Movie(
         @SerializedName("adult")
@@ -43,5 +44,8 @@ data class MoviesResponse(
         val voteAverage: Double = 0.0, // 7.4
         @SerializedName("vote_count")
         val voteCount: Int = 0 // 878
-    )
+    ) {
+        fun getYear() = releaseDate.split('-').first()
+        fun getFullPosterPath() = "${Constants.imageApiPoster}$posterPath"
+    }
 }

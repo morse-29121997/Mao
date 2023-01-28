@@ -1,7 +1,13 @@
 package com.morse.movie.utils
 
-object Constants {
+import androidx.compose.ui.unit.dp
 
+object Constants {
+    val regularImageWidth = 150.dp
+    val regularImageHeight = 200.dp
+    val ratedRegularImageHeight = 250.dp
+    val tvImageWidth = 200.dp
+    val tvImageHeight = 350.dp
     const val MOVIE_TYPE = "movieType"
     const val MOVIE_ID_kEY = "movieId"
     const val MOVIE_DETAIL_ID_kEY = "movieDetailId"
@@ -35,7 +41,7 @@ object Constants {
     const val nowplayingTv = "tv/now_playing?api_key=$apiKey&language=en-US&page=1"
 
     // Add w500 to be Background or w300 and then add posterPath
-    const val imageApiPoster = "https://image.tmdb.org/t/p/w400"
+    const val imageApiPoster = "https://image.tmdb.org/t/p/w300"
     const val imageApiBackground = "https://image.tmdb.org/t/p/w500"
     const val emptyPlaceHolderHeader = "https://gravatar.com/avatar/"
     const val emptyPlaceholderBody = "?s=400&d=robohash&r=x"

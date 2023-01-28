@@ -6,23 +6,34 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
+/*
+ h1, h2, h3, h4, h5, h6, subtitle1, subtitle2, body1, body2, caption, button, overline
+ */
+
 val Typography = Typography(
     body1 = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+        fontFamily = MoonFont,
+        fontWeight = FontWeight.Bold,
         fontSize = 16.sp
-    )
-    /* Other default text styles to override
-    button = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.W500,
+    ),
+    body2 = TextStyle(
+        fontFamily = MoonFont,
+        fontWeight = FontWeight.Light,
         fontSize = 14.sp
     ),
-    caption = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 12.sp
+    subtitle1 = TextStyle(
+        fontFamily = CairoFont,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp
+    ),
+    subtitle2 = TextStyle(
+        fontFamily = CairoFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 14.sp
+    ) ,
+    button = TextStyle(
+        fontFamily = CairoFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
     )
-    */
 )

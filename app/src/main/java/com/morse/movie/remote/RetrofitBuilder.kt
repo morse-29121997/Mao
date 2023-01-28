@@ -8,7 +8,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 
@@ -20,14 +19,13 @@ object RetrofitBuilder {
         return userRetrofit ?: createRetrofit().also { userRetrofit = it }
     }
 
-    fun getMoviesAPI() = getInstance().create(MoviesApis::class.java)
+    fun getMaoAPI(): MaoApis = getInstance().create(MaoApis::class.java)
 
     private fun createRetrofit(): Retrofit {
         val gson = GsonBuilder().disableHtmlEscaping()
         return Retrofit.Builder().baseUrl("https://api.themoviedb.org/3/").apply {
             addConverterFactory(GsonConverterFactory.create(gson.create()))
             addCallAdapterFactory(CoroutineCallAdapterFactory())
-
             client(getClientOkHttpInstance())
         }.build()
     }

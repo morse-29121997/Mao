@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">猫放时光</string>
+    <string name="copy_right">Copyright © 2017</string>
+    <string name="page1_message">Know the movie  is not worth Watching</string>
+    <string name="next">Next</string>
+    <string name="get_started">Get Started</string>
+    <string name="page2_message">Real-time  updates movie Trailer</string>
+    <string name="page3_message"><![CDATA[Get the first \n  Movie &TV information]]></string>
+    <string name="movies_lable">MOVIES</string>
+    <string name="tv_lable">TV</string>
+    <string name="profile_lable">PROFILE</string>
+    <string name="now">Now</string>
+    <string name="popular">Popular</string>
+    <string name="me">Mohamed Morse</string>
+    <string name="like">Like</string>
+    <string name="watching">Watching</string>
+    <string name="comment">Comment</string>
+</resources>
