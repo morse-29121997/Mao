@@ -54,6 +54,7 @@ object HomeDirection : Directions {
         get() = "Home-Screen"
 
     object MoviesDirection : Directions {
+
         override val name: String
             get() = "Movies-Tab"
 

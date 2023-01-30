@@ -1,12 +1,12 @@
 package com.morse.movie.ui.composables.home.shared
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.IntegerRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Card
-import androidx.compose.material.Colors
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,13 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -29,6 +34,7 @@ import coil.request.ImageRequest
 import com.morse.movie.R
 import com.morse.movie.ui.theme.Shapes
 import com.morse.movie.utils.Constants
+import com.morse.movie.utils.customBackground
 
 @Preview(showSystemUi = true)
 @Composable
@@ -85,6 +91,33 @@ fun Loading(modifier: Modifier) {
         modifier = modifier,
         color = Color(0XFFF89A04), strokeWidth = 5.dp
     )
+}
+
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun Empty(modifier: Modifier, @StringRes message: Int) {
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.empty),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(0F)
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(id = message),
+            color = Color.Black,
+            style = MaterialTheme.typography.h1,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = TextUnit(
+                15F,
+                TextUnitType.Sp
+            )
+        )
+    }
 }
 
 @Composable
@@ -172,10 +205,32 @@ fun TVRatedMediaItem(imageUrl: String, mediaName: String, rateValue: String, onC
 }
 
 @Composable
-fun MediaImage(modifier: Modifier = Modifier, url: String) {
+fun RateBar(modifier: Modifier, count: Int, until: Int) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        repeat(count) {
+            val currentStar = it + 1
+            if (until >= currentStar) {
+                Image(
+                    painter = painterResource(id = R.drawable.yellow_star),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.gray_star),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun MediaImage(modifier: Modifier = Modifier, url: String, shape: Shape = Shapes.large) {
     AsyncImage(
         modifier = modifier
-            .clip(Shapes.large)
+            .clip(shape)
             .shadow(10.dp, ambientColor = Color.Black),
         model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true)
             .placeholder(R.drawable.placeholder)
@@ -203,5 +258,27 @@ fun Rate(modifier: Modifier, rateValue: String) {
                 style = MaterialTheme.typography.subtitle2
             )
         }
+    }
+}
+
+@Composable
+fun Fab(
+    modifier: Modifier,
+    isSelected : Boolean ,
+    @DrawableRes selectedIcon: Int,
+    @DrawableRes unselectedIcon: Int,
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = { onClick.invoke() }, modifier = Modifier
+            .size(56.dp)
+            .customBackground(isSelected)
+            .then(modifier)
+    ) {
+        androidx.compose.material3.Icon(
+            painter = painterResource(id = if (isSelected) selectedIcon else unselectedIcon),
+            contentDescription = null,
+            tint = if (isSelected) Color.White else Color(0XFF979797),
+        )
     }
 }

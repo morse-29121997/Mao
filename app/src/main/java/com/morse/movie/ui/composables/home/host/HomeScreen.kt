@@ -33,7 +33,7 @@ fun HomeScreen(controller: NavHostController? = null) {
     val tabsController = rememberNavController()
     Scaffold(
         bottomBar = {
-            MaoBottomNavigation(controller = tabsController)
+            MaoBottomNavigation(tabController = tabsController)
         },
         scaffoldState = scaffoldState
     ) { HomeCoordinator(controller = tabsController) }
@@ -41,9 +41,9 @@ fun HomeScreen(controller: NavHostController? = null) {
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun MaoBottomNavigation(controller: NavHostController?) {
+fun MaoBottomNavigation(tabController: NavHostController?) {
     BottomNavigation(elevation = 5.dp) {
-        val navBackStackEntry by controller!!.currentBackStackEntryAsState()
+        val navBackStackEntry by tabController!!.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         TabItem.tabs().forEach { currentTab ->
             val isSelected =
@@ -51,7 +51,7 @@ fun MaoBottomNavigation(controller: NavHostController?) {
             BottomNavigationItem(
                 selected = isSelected,
                 onClick = {
-                    Directions.findDirection(currentTab.routeName).navigate(controller)
+                    Directions.findDirection(currentTab.routeName).navigate(tabController)
                 },
                 enabled = true,
                 alwaysShowLabel = true,

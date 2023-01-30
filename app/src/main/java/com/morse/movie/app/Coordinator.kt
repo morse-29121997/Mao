@@ -29,7 +29,8 @@ fun MaoCoordinator(controller: NavHostController) {
         route = ApplicationRoute
     ) {
         composable(SplashDirection.name) {
-            SplashScreen(controller)
+       /*     SplashScreen(controller)*/
+            MovieDetailsScreen(controller)
         }
         composable(OnBoardingDirection.name) {
             OnBoardingScreen(controller)

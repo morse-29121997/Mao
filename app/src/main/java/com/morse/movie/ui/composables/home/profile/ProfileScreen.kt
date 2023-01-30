@@ -30,6 +30,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import com.morse.movie.R
+import com.morse.movie.ui.composables.home.shared.Empty
 import com.morse.movie.utils.Constants
 
 @Preview(showSystemUi = true)
@@ -44,8 +45,8 @@ fun ProfileScreen(controller: NavHostController? = null) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val footer = createGuidelineFromTop(0.35F)
         val topGuideline = createGuidelineFromTop(0.05F)
-        val (profileTitle, settingIcon, background, nameBg, name, myPhoto, like, watching, comments, items) = createRefs()
-
+        val (profileTitle, settingIcon, background, nameBg, name, myPhoto, empty, like, watching, comments, items) = createRefs()
+        val likesItems = arrayListOf<Int>()
         Image(
             painter = painterResource(id = R.drawable.profile_bg),
             contentDescription = null,
@@ -110,14 +111,14 @@ fun ProfileScreen(controller: NavHostController? = null) {
             start.linkTo(parent.start, 10.dp)
             end.linkTo(watching.start)
             top.linkTo(background.bottom, 20.dp)
-        }, number = 3210, name = R.string.like, isSelected = true)
+        }, number = 3210, name = R.string.like, isSelected = false)
 
 
         StaticsItem(modifier = Modifier.constrainAs(watching) {
             start.linkTo(like.end, 10.dp)
             end.linkTo(comments.start)
             linkTo(like.top, like.bottom)
-        }, number = 1231, name = R.string.watching, isSelected = false)
+        }, number = 1231, name = R.string.watching, isSelected = true)
 
 
         StaticsItem(modifier = Modifier.constrainAs(comments) {
@@ -125,11 +126,18 @@ fun ProfileScreen(controller: NavHostController? = null) {
             linkTo(like.top, like.bottom)
             end.linkTo(parent.end, 10.dp)
         }, number = 44, name = R.string.comment, isSelected = false)
+        if (likesItems.isEmpty()) {
+            Empty(modifier = Modifier.constrainAs(empty) {
+                linkTo(like.bottom, parent.bottom)
+                linkTo(parent.start, parent.end)
+                height = Dimension.fillToConstraints
+                width = Dimension.fillToConstraints
+            }, message = R.string.empty_interaction_on_movies)
+        } else {
+            LazyVerticalGrid(columns = GridCells.Fixed(4)) {
 
-        LazyVerticalGrid(columns = GridCells.Fixed(4)){
-
+            }
         }
-
     }
 }
 
