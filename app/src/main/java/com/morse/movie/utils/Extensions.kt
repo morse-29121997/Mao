@@ -38,6 +38,13 @@ private fun Modifier.backgroundModifier(isSelected: Boolean) = if (isSelected) {
     Modifier.background(Color.White)
 }
 
+@Composable
+fun LoadFromVM ( key : Any , execute : () -> Unit){
+    LaunchedEffect(key) {
+        execute.invoke()
+    }
+}
+
 fun <Result, MapResult> BaseRepository.execute(
     executionApi: suspend () -> Response<Result>,
     mapFunctions: (Result?) -> MapResult

@@ -7,8 +7,7 @@ const val HomeRoute = "Home-Route"
 
 interface Directions {
     val name: String
-    fun navigate(controller: NavHostController?): Unit? = null
-
+    fun navigate(navigationController: NavHostController?): Unit? = null
     companion object {
         fun findDirection(routeName: String) = when (routeName) {
             SplashDirection.name -> SplashDirection
@@ -26,8 +25,8 @@ object SplashDirection : Directions {
     override val name: String
         get() = "Splash-Screen"
 
-    override fun navigate(controller: NavHostController?) {
-        controller?.navigate(OnBoardingDirection.name) {
+    override fun navigate(navigationController: NavHostController?) {
+        navigationController?.navigate(OnBoardingDirection.name) {
             popUpTo(name) {
                 inclusive = true
             }
@@ -39,8 +38,8 @@ object OnBoardingDirection : Directions {
     override val name: String
         get() = "OnBoarding-Screen"
 
-    override fun navigate(controller: NavHostController?) {
-        controller?.navigate(HomeDirection.name) {
+    override fun navigate(navigationController: NavHostController?) {
+        navigationController?.navigate(HomeDirection.name) {
             popUpTo(name) {
                 inclusive = true
             }
@@ -58,17 +57,18 @@ object HomeDirection : Directions {
         override val name: String
             get() = "Movies-Tab"
 
-        override fun navigate(controller: NavHostController?) {
-            controller?.navigate(name)
+        override fun navigate(navigationController: NavHostController?) {
+            navigationController?.navigate(name)
         }
+
     }
 
     object TVsDirection : Directions {
         override val name: String
             get() = "TVs-Tab"
 
-        override fun navigate(controller: NavHostController?) {
-            controller?.navigate(name)
+        override fun navigate(navigationController: NavHostController?) {
+            navigationController?.navigate(name)
         }
     }
 
@@ -76,8 +76,8 @@ object HomeDirection : Directions {
         override val name: String
             get() = "Profile-Tab"
 
-        override fun navigate(controller: NavHostController?) {
-            controller?.navigate(name)
+        override fun navigate(navigationController: NavHostController?) {
+            navigationController?.navigate(name)
         }
     }
 }
@@ -94,8 +94,8 @@ object MovieDetailsDirection : Directions {
         movieId = id
     }
 
-    override fun navigate(controller: NavHostController?) {
-        controller?.navigate(route =  navigationName)
+    override fun navigate(navigationController: NavHostController?) {
+        navigationController?.navigate(route = navigationName)
     }
 }
 
@@ -110,7 +110,8 @@ object TVDetailsDirection : Directions {
     fun injectTVId(id: Int) {
         tvId = id
     }
-    override fun navigate(controller: NavHostController?) {
-        controller?.navigate(navigationName)
+
+    override fun navigate(navigationController: NavHostController?) {
+        navigationController?.navigate(navigationName)
     }
 }

@@ -36,7 +36,7 @@ fun HomeScreen(controller: NavHostController? = null) {
             MaoBottomNavigation(tabController = tabsController)
         },
         scaffoldState = scaffoldState
-    ) { HomeCoordinator(controller = tabsController) }
+    ) { HomeCoordinator(tabController = tabsController, detailsController = controller!!) }
 }
 
 @OptIn(ExperimentalUnitApi::class)

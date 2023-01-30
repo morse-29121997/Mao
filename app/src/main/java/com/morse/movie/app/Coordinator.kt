@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -12,6 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.morse.movie.ui.composables.details.movies.MovieDetailsScreen
+import com.morse.movie.ui.composables.details.movies.MovieDetailsViewModel
 import com.morse.movie.ui.composables.details.tvs.TVDetailsScreen
 import com.morse.movie.ui.composables.home.host.HomeScreen
 import com.morse.movie.ui.composables.home.movies.MoviesScreen
@@ -29,8 +31,7 @@ fun MaoCoordinator(controller: NavHostController) {
         route = ApplicationRoute
     ) {
         composable(SplashDirection.name) {
-       /*     SplashScreen(controller)*/
-            MovieDetailsScreen(controller)
+            SplashScreen(controller)
         }
         composable(OnBoardingDirection.name) {
             OnBoardingScreen(controller)
@@ -41,7 +42,10 @@ fun MaoCoordinator(controller: NavHostController) {
         composable(MovieDetailsDirection.name, arguments = listOf(navArgument("movieId") {
             type = NavType.IntType
         })) {
-            MovieDetailsScreen(controller)
+            MovieDetailsScreen(
+                controller,
+                viewModel(factory = MovieDetailsViewModel.Factory.Instance(owner = it))
+            )
         }
         composable(TVDetailsDirection.name, arguments = listOf(navArgument("tvId") {
             type = NavType.IntType
@@ -52,21 +56,21 @@ fun MaoCoordinator(controller: NavHostController) {
 }
 
 @Composable
-fun HomeCoordinator(controller: NavHostController) {
+fun HomeCoordinator(tabController: NavHostController, detailsController: NavHostController) {
 
     NavHost(
-        navController = controller,
+        navController = tabController,
         startDestination = HomeDirection.MoviesDirection.name,
         route = HomeRoute
     ) {
         composable(HomeDirection.MoviesDirection.name) {
-            MoviesScreen(controller)
+            MoviesScreen(detailsController)
         }
         composable(HomeDirection.TVsDirection.name) {
-            TVsScreen(controller)
+            TVsScreen(detailsController)
         }
         composable(HomeDirection.ProfileDirection.name) {
-            ProfileScreen(controller)
+            ProfileScreen(detailsController)
         }
     }
 }

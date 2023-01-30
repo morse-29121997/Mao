@@ -20,7 +20,7 @@ class MoviesViewModel(private val repository: IMoviesRepository = MoviesReposito
     private val _now = MutableSharedFlow<State>()
     val now: Flow<State> get() = _now
 
-    init {
+    fun load() {
         loadPopularMovies()
         loadNowMovies()
     }

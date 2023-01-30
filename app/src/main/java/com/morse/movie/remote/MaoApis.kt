@@ -1,5 +1,7 @@
 package com.morse.movie.remote
 
+import com.morse.movie.data.entities.remote.CastResponse
+import com.morse.movie.data.entities.remote.MovieDetailsResponse
 import com.morse.movie.data.entities.remote.MoviesResponse
 import com.morse.movie.data.entities.remote.TVResponse
 import com.morse.movie.utils.Constants
@@ -22,15 +24,15 @@ interface MaoApis {
     suspend fun getNowPlayingTv(): Response<TVResponse>
 
     @GET("movie/{movieId}?api_key=${Constants.apiKey}&language=en-US")
-    suspend fun getMovieDetails(@Path("movieId") movieId: Int): Response<Any>
+    suspend fun getMovieDetails(@Path("movieId") movieId: Int): Response<MovieDetailsResponse>
 
     @GET("movie/{movieId}/credits?api_key=${Constants.apiKey}&language=en-US")
-    suspend fun getMovieCredits(@Path("movieId") movieId: Int): Response<Any>
+    suspend fun getMovieCredits(@Path("movieId") movieId: Int): Response<CastResponse>
 
     @GET("tv/{tvId}?api_key=${Constants.apiKey}&language=en-US")
-    suspend fun getTVDetails(@Path("tvId") tvId: Int): Response<Any>
+    suspend fun getTVDetails(@Path("tvId") tvId: Int): Response<MovieDetailsResponse>
 
     @GET("/tv/{tvId}/credits?api_key=${Constants.apiKey}&language=en-US")
-    suspend fun getTVCredits(@Path("tvId") tvId: Int): Response<Any>
+    suspend fun getTVCredits(@Path("tvId") tvId: Int): Response<CastResponse>
 
 }

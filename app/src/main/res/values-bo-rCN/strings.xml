@@ -19,4 +19,5 @@
     <string name="empty_interaction_on_movies">* There is no movies or tv show to display unfortunatly</string>
     <string name="back">Back</string>
     <string name="full_cast_and_crew"><![CDATA[Full Cast & Crew]]></string>
+    <string name="people_watching"> $1%s People wathing</string>
 </resources>

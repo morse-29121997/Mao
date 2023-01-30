@@ -45,6 +45,7 @@ import com.morse.movie.data.entities.ui.State
 import com.morse.movie.ui.composables.home.shared.Loading
 import com.morse.movie.ui.composables.home.shared.MediaItem
 import com.morse.movie.ui.composables.home.shared.RatedMediaItem
+import com.morse.movie.utils.LoadFromVM
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 
 @Preview(showSystemUi = true)
@@ -57,6 +58,9 @@ fun PreviewMoviesScreen() {
 @Composable
 fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = viewModel()) {
     val scrollable = rememberScrollState()
+    LoadFromVM(true) {
+        vm.load()
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()

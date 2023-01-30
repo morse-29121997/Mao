@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,27 +44,28 @@ import androidx.navigation.NavHostController
 import com.morse.movie.data.entities.ui.State
 import com.morse.movie.utils.customBackground
 import com.morse.movie.R
+import com.morse.movie.data.entities.remote.CastResponse
+import com.morse.movie.data.entities.remote.MovieDetailsResponse
 import com.morse.movie.ui.composables.home.shared.*
 import com.morse.movie.ui.theme.Shapes
 import com.morse.movie.utils.Constants
-
-@Preview(showSystemUi = true)
-@Composable
-fun ShowMovieDetailsScreen() {
-    ConstraintLayout {
-        RenderMovieDetails()
-    }
-}
+import com.morse.movie.utils.LoadFromVM
 
 @Composable
 fun MovieDetailsScreen(
     controller: NavHostController? = null,
-    vm: MovieDetailsViewModel = viewModel()
+    vm: MovieDetailsViewModel
 ) {
+    val movieId = controller?.currentBackStackEntry?.arguments?.getInt("movieId") ?: 240
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val details = vm.details.collectAsState(initial = State.Loading)
-        val credits = vm.details.collectAsState(initial = State.Loading)
+        val credits = vm.credits.collectAsState(initial = State.Loading)
         val loading = createRef()
+        LoadFromVM(movieId) {
+            if(movieId > 0) {
+                vm.load(movieId)
+            }
+        }
         when {
             details.value is State.Loading || credits.value is State.Loading -> Loading(
                 modifier = Modifier.constrainAs(
@@ -73,7 +75,10 @@ fun MovieDetailsScreen(
                     linkTo(parent.start, parent.end)
                 })
             else -> {
-                RenderMovieDetails()
+                RenderMovieDetails(
+                    (details.value as State.Success<MovieDetailsResponse>).response,
+                    (credits.value as State.Success<CastResponse>).response
+                )
             }
         }
     }
@@ -81,7 +86,10 @@ fun MovieDetailsScreen(
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun ConstraintLayoutScope.RenderMovieDetails() {
+fun ConstraintLayoutScope.RenderMovieDetails(
+    detailsModel: MovieDetailsResponse,
+    castModel: CastResponse
+) {
     val topGuideline = createGuidelineFromTop(0.05F)
     val textDetailsGuideline = createGuidelineFromTop(0.29F)
     val detailGuidelineBottom = createGuidelineFromTop(0.55F)
@@ -90,7 +98,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
         shareBtn, detailBackground, rateBar, rateValueInt,
         rateValueDouble, cast) = createRefs()
     MediaImage(
-        url = "https://m.media-amazon.com/images/M/MV5BMjAwNTljOTgtYzk0NS00OGMzLTgzMDUtZDc2YjhjNzU3Yjg5XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1002_.jpg",
+        url = detailsModel.getBackgroundImage(),
         modifier = Modifier.constrainAs(detailBackground) {
             linkTo(parent.top, detailGuidelineBottom)
             linkTo(parent.start, parent.end)
@@ -131,7 +139,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
     }
 
     Text(
-        text = "Mal de la",
+        text = detailsModel.title,
         modifier = Modifier.constrainAs(name) {
             linkTo(backBtn.start, shareBtn.end)
             top.linkTo(textDetailsGuideline)
@@ -146,7 +154,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
     )
 
     Text(
-        text = "3,292 People wathing",
+        text = stringResource(id = R.string.people_watching, detailsModel.popularity.toString()),
         modifier = Modifier.constrainAs(watching) {
             linkTo(backBtn.start, shareBtn.end)
             top.linkTo(name.bottom, 5.dp)
@@ -162,7 +170,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
     )
 
     Text(
-        text = "9",
+        text = detailsModel.getVoteDecimal(),
         modifier = Modifier.constrainAs(rateValueInt) {
             start.linkTo(watching.start)
             top.linkTo(watching.bottom, 5.dp)
@@ -176,7 +184,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
         fontSize = TextUnit(18F, TextUnitType.Sp)
     )
     Text(
-        text = ".7",
+        text = detailsModel.getVoteFraction(),
         modifier = Modifier.constrainAs(rateValueDouble) {
             start.linkTo(rateValueInt.end)
             top.linkTo(rateValueInt.top)
@@ -209,7 +217,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
     }
 
     Text(
-        text = "After being struck by lightning, Barry Allen wakes up from his coma to discover he's been given the power of super speed, becoming the Flash, fighting crime in Central City.",
+        text = detailsModel.overview,
         modifier = Modifier.constrainAs(details) {
             start.linkTo(watching.start)
             linkTo(playFab.bottom, detailBackground.bottom, 5.dp)
@@ -232,7 +240,7 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
         linkTo(backBtn.start, shareBtn.end)
         width = Dimension.fillToConstraints
         height = Dimension.fillToConstraints
-    })
+    }, castModel)
 
     DetailsAction(
         onClick = {},
@@ -277,7 +285,8 @@ fun ConstraintLayoutScope.RenderMovieDetails() {
 @Composable
 fun ConstraintLayoutScope.RenderActors(
     modifier: Modifier,
-    scrollableState: ScrollableState = rememberScrollState()
+    casts: CastResponse,
+    scrollableState: ScrollableState = rememberScrollState(),
 ) {
     Column(
         modifier = Modifier
@@ -297,10 +306,10 @@ fun ConstraintLayoutScope.RenderActors(
         )
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(modifier = modifier) {
-            items(arrayListOf(1, 2, 3, 4, 5)) {
+            items(casts.cast) {
                 MediaItem(
-                    imageUrl = "https://media1.popsugar-assets.com/files/thumbor/IBVwVOBnCJ5CJm3iMASHBMqaHtE/fit-in/2048xorig/filters:format_auto-!!-:strip_icc-!!-/2016/05/05/892/n/1922398/3f3366f4b7377de5_GettyImages-453269476/i/Hot-Pictures-Grant-Gustin.jpg",
-                    name = "Grant Morse"
+                    imageUrl = it.getPosterPath(),
+                    name = it.name
                 ) {
 
                 }
