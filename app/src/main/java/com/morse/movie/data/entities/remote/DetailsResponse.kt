@@ -1,8 +1,10 @@
 package com.morse.movie.data.entities.remote
 
+import com.google.gson.annotations.SerializedName
 import com.morse.movie.utils.Constants
 
-data class MovieDetailsResponse(
+data class DetailsResponse(
+    @SerializedName("title" , alternate = ["name"])
     val title: String,
     val overview: String,
     val popularity: Double,

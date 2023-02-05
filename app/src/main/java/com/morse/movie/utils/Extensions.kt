@@ -1,6 +1,8 @@
 package com.morse.movie.utils
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -8,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import com.morse.movie.data.entities.remote.DetailsResponse
 import com.morse.movie.data.entities.ui.State
 import com.morse.movie.data.repository.BaseRepository
 import kotlinx.coroutines.CoroutineScope
@@ -38,8 +41,19 @@ private fun Modifier.backgroundModifier(isSelected: Boolean) = if (isSelected) {
     Modifier.background(Color.White)
 }
 
+fun Context.shareMedia(details: DetailsResponse) {
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_SUBJECT, "Watch ${details.title} 👋")
+        putExtra(Intent.EXTRA_TEXT, details.overview)
+    }
+    startActivity(
+        Intent.createChooser(shareIntent, "Share With")
+    )
+}
+
 @Composable
-fun LoadFromVM ( key : Any , execute : () -> Unit){
+fun LoadFromVM(key: Any, execute: () -> Unit) {
     LaunchedEffect(key) {
         execute.invoke()
     }

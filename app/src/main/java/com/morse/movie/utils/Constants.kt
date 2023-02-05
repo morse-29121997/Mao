@@ -15,7 +15,7 @@ object Constants {
     const val baseApi = "https://api.themoviedb.org/3/"
     const val credits = "movie/{movie_id}/credits?api_key=$apiKey&language=en-US"
     const val searchMovies =
-        "search/movie?api_key=$apiKey&language=en-US" //search/movie?api_key=$apiKey&language=en-US&query=asdasdasd
+        "search/movie?api_key=$apiKey&language=en-US" //search/movie?api_key=$apiKey&language=en-US&query=
     const val popularMovies = "movie/popular?api_key=$apiKey&language=en-US"
     const val topRatedMovies = "movie/top_rated?api_key=$apiKey&language=en-US"
     const val inCommingMovies = "movie/upcoming?api_key=$apiKey&language=en-US"

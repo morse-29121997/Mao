@@ -1,37 +1,22 @@
 package com.morse.movie.ui.composables.details.movies
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -39,17 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.morse.movie.data.entities.ui.State
-import com.morse.movie.utils.customBackground
 import com.morse.movie.R
 import com.morse.movie.data.entities.remote.CastResponse
-import com.morse.movie.data.entities.remote.MovieDetailsResponse
+import com.morse.movie.data.entities.remote.DetailsResponse
 import com.morse.movie.ui.composables.home.shared.*
-import com.morse.movie.ui.theme.Shapes
-import com.morse.movie.utils.Constants
 import com.morse.movie.utils.LoadFromVM
+import com.morse.movie.utils.shareMedia
 
 @Composable
 fun MovieDetailsScreen(
@@ -62,7 +45,7 @@ fun MovieDetailsScreen(
         val credits = vm.credits.collectAsState(initial = State.Loading)
         val loading = createRef()
         LoadFromVM(movieId) {
-            if(movieId > 0) {
+            if (movieId > 0) {
                 vm.load(movieId)
             }
         }
@@ -75,9 +58,10 @@ fun MovieDetailsScreen(
                     linkTo(parent.start, parent.end)
                 })
             else -> {
-                RenderMovieDetails(
-                    (details.value as State.Success<MovieDetailsResponse>).response,
-                    (credits.value as State.Success<CastResponse>).response
+                RenderDetails(
+                    { controller?.popBackStack() },
+                    (details.value as State.Success<DetailsResponse>).response,
+                    (credits.value as State.Success<CastResponse>).response.cast
                 )
             }
         }
@@ -86,10 +70,12 @@ fun MovieDetailsScreen(
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun ConstraintLayoutScope.RenderMovieDetails(
-    detailsModel: MovieDetailsResponse,
-    castModel: CastResponse
+fun ConstraintLayoutScope.RenderDetails(
+    onBackPressed: () -> Unit,
+    detailsModel: DetailsResponse,
+    castModel: ArrayList<CastResponse.Cast>
 ) {
+    val context = LocalContext.current
     val topGuideline = createGuidelineFromTop(0.05F)
     val textDetailsGuideline = createGuidelineFromTop(0.29F)
     val detailGuidelineBottom = createGuidelineFromTop(0.55F)
@@ -108,10 +94,16 @@ fun ConstraintLayoutScope.RenderMovieDetails(
         shape = RectangleShape
     )
 
-    Row(modifier = Modifier.constrainAs(backBtn) {
-        start.linkTo(parent.start, 10.dp)
-        top.linkTo(topGuideline)
-    }, verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = Modifier
+        .constrainAs(backBtn) {
+            start.linkTo(parent.start, 10.dp)
+            top.linkTo(topGuideline)
+        }
+        .clickable {
+            onBackPressed.invoke()
+        }, verticalAlignment = Alignment.CenterVertically
+    ) {
+
         Icon(
             painter = painterResource(id = R.drawable.back_icon),
             contentDescription = null,
@@ -130,7 +122,9 @@ fun ConstraintLayoutScope.RenderMovieDetails(
         top.linkTo(backBtn.top)
         bottom.linkTo(backBtn.bottom)
         end.linkTo(parent.end, 10.dp)
-    }, onClick = { }) {
+    }, onClick = {
+        context.shareMedia(detailsModel)
+    }) {
         Icon(
             painter = painterResource(id = R.drawable.share_icon),
             contentDescription = null,
@@ -281,74 +275,6 @@ fun ConstraintLayoutScope.RenderMovieDetails(
 
 }
 
-@OptIn(ExperimentalUnitApi::class)
-@Composable
-fun ConstraintLayoutScope.RenderActors(
-    modifier: Modifier,
-    casts: CastResponse,
-    scrollableState: ScrollableState = rememberScrollState(),
-) {
-    Column(
-        modifier = Modifier
-            .scrollable(scrollableState, Orientation.Vertical)
-            .then(modifier)
-    ) {
-        Text(
-            text = stringResource(id = R.string.full_cast_and_crew),
-            style = MaterialTheme.typography.h1,
-            fontWeight = FontWeight.SemiBold,
-            fontStyle = FontStyle.Normal,
-            textAlign = TextAlign.Companion.Justify,
-            color = Color(0XFF666666),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            fontSize = TextUnit(18F, TextUnitType.Sp)
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        LazyRow(modifier = modifier) {
-            items(casts.cast) {
-                MediaItem(
-                    imageUrl = it.getPosterPath(),
-                    name = it.name
-                ) {
 
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(30.dp))
-    }
-}
-
-@OptIn(ExperimentalUnitApi::class)
-@Composable
-fun DetailsAction(
-    modifier: Modifier,
-    isSelected: Boolean,
-    count: String,
-    @DrawableRes unselectedIcon: Int,
-    @DrawableRes selectedIcon: Int,
-    onClick: () -> Unit
-) {
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-
-        Fab(
-            modifier = modifier,
-            isSelected = isSelected,
-            selectedIcon = selectedIcon,
-            unselectedIcon = unselectedIcon
-        ) {
-            onClick.invoke()
-        }
-
-        Text(
-            text = count,
-            style = MaterialTheme.typography.h1,
-            color = Color(0xFF999999),
-            fontWeight = FontWeight.Medium,
-            fontSize = TextUnit(13F, TextUnitType.Sp),
-        )
-
-    }
-}
 
 

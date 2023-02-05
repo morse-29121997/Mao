@@ -15,6 +15,7 @@ import androidx.navigation.navigation
 import com.morse.movie.ui.composables.details.movies.MovieDetailsScreen
 import com.morse.movie.ui.composables.details.movies.MovieDetailsViewModel
 import com.morse.movie.ui.composables.details.tvs.TVDetailsScreen
+import com.morse.movie.ui.composables.details.tvs.TVDetailsViewModel
 import com.morse.movie.ui.composables.home.host.HomeScreen
 import com.morse.movie.ui.composables.home.movies.MoviesScreen
 import com.morse.movie.ui.composables.home.profile.ProfileScreen
@@ -50,7 +51,10 @@ fun MaoCoordinator(controller: NavHostController) {
         composable(TVDetailsDirection.name, arguments = listOf(navArgument("tvId") {
             type = NavType.IntType
         })) {
-            TVDetailsScreen(controller)
+            TVDetailsScreen(
+                controller,
+                viewModel(factory = TVDetailsViewModel.Factory.Instance(owner = it))
+            )
         }
     }
 }

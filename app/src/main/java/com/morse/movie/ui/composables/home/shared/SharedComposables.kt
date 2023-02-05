@@ -5,7 +5,13 @@ import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -19,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,6 +39,7 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.morse.movie.R
+import com.morse.movie.data.entities.remote.CastResponse
 import com.morse.movie.ui.theme.Shapes
 import com.morse.movie.utils.Constants
 import com.morse.movie.utils.customBackground
@@ -280,5 +288,76 @@ fun Fab(
             contentDescription = null,
             tint = if (isSelected) Color.White else Color(0XFF979797),
         )
+    }
+}
+
+
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun RenderActors(
+    modifier: Modifier,
+    casts: ArrayList<CastResponse.Cast>,
+    scrollableState: ScrollableState = rememberScrollState(),
+) {
+    Column(
+        modifier = Modifier
+            .scrollable(scrollableState, Orientation.Vertical)
+            .then(modifier)
+    ) {
+        Text(
+            text = stringResource(id = R.string.full_cast_and_crew),
+            style = MaterialTheme.typography.h1,
+            fontWeight = FontWeight.SemiBold,
+            fontStyle = FontStyle.Normal,
+            textAlign = TextAlign.Companion.Justify,
+            color = Color(0XFF666666),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = TextUnit(18F, TextUnitType.Sp)
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        LazyRow(modifier = modifier) {
+            items(casts) {
+                MediaItem(
+                    imageUrl = it.getPosterPath(),
+                    name = it.name
+                ) {
+
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(30.dp))
+    }
+}
+
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun DetailsAction(
+    modifier: Modifier,
+    isSelected: Boolean,
+    count: String,
+    @DrawableRes unselectedIcon: Int,
+    @DrawableRes selectedIcon: Int,
+    onClick: () -> Unit
+) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Fab(
+            modifier = modifier,
+            isSelected = isSelected,
+            selectedIcon = selectedIcon,
+            unselectedIcon = unselectedIcon
+        ) {
+            onClick.invoke()
+        }
+
+        Text(
+            text = count,
+            style = MaterialTheme.typography.h1,
+            color = Color(0xFF999999),
+            fontWeight = FontWeight.Medium,
+            fontSize = TextUnit(13F, TextUnitType.Sp),
+        )
+
     }
 }
