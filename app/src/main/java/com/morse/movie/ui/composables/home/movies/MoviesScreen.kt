@@ -46,6 +46,7 @@ import com.morse.movie.ui.composables.home.shared.Loading
 import com.morse.movie.ui.composables.home.shared.MediaItem
 import com.morse.movie.ui.composables.home.shared.RatedMediaItem
 import com.morse.movie.utils.LoadFromVM
+import com.morse.movie.utils.log
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 
 @Preview(showSystemUi = true)
@@ -117,8 +118,8 @@ fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = vi
                         NowMovies(
                             nowMovies = (now.value as State.Success<*>).response as ArrayList<MoviesResponse.Movie>,
                             modifier = Modifier
-                        ){
-                            MovieDetailsDirection.apply{
+                        ) {
+                            MovieDetailsDirection.apply {
                                 injectMovieId(it.id)
                                 navigate(controller)
                             }
@@ -128,8 +129,9 @@ fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = vi
                         PopularsMovies(
                             popularMovies = (popular.value as State.Success<*>).response as ArrayList<MoviesResponse.Movie>,
                             modifier = Modifier
-                        ){
-                            MovieDetailsDirection.apply{
+                        ) {
+                            " Name : ${it.title} and With Id : ${it.id}".log()
+                            MovieDetailsDirection.apply {
                                 injectMovieId(it.id)
                                 navigate(controller)
                             }
@@ -163,7 +165,11 @@ fun ADSBanner(modifier: Modifier) {
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun NowMovies(modifier: Modifier, nowMovies: ArrayList<MoviesResponse.Movie> , onClick : (MoviesResponse.Movie) -> Unit) {
+fun NowMovies(
+    modifier: Modifier,
+    nowMovies: ArrayList<MoviesResponse.Movie>,
+    onClick: (MoviesResponse.Movie) -> Unit
+) {
     Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.now),
@@ -174,9 +180,10 @@ fun NowMovies(modifier: Modifier, nowMovies: ArrayList<MoviesResponse.Movie> , o
         )
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(horizontalArrangement = Arrangement.SpaceBetween) {
-            items(nowMovies) {
-                MediaItem(imageUrl = it.getFullPosterPath(), name = it.title){
-                        onClick.invoke(it)
+            items(nowMovies, key = {it.id}) {
+                MediaItem(imageUrl = it.getFullPosterPath(), name = it.title) {
+                    it.title.log()
+                    onClick.invoke(it)
                 }
             }
         }
@@ -185,7 +192,11 @@ fun NowMovies(modifier: Modifier, nowMovies: ArrayList<MoviesResponse.Movie> , o
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun PopularsMovies(modifier: Modifier, popularMovies: ArrayList<MoviesResponse.Movie> , onClick : (MoviesResponse.Movie) -> Unit) {
+fun PopularsMovies(
+    modifier: Modifier,
+    popularMovies: ArrayList<MoviesResponse.Movie>,
+    onClick: (MoviesResponse.Movie) -> Unit
+) {
     Column(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.popular),
@@ -201,13 +212,14 @@ fun PopularsMovies(modifier: Modifier, popularMovies: ArrayList<MoviesResponse.M
             contentPadding = PaddingValues(5.dp),
             modifier = Modifier.height(500.dp)
         ) {
-            items(popularMovies) {
+            items(popularMovies, key = {it.id}) {
                 RatedMediaItem(
                     imageUrl = it.getFullPosterPath(),
                     mediaName = it.title,
                     mediaYear = it.getYear(),
                     rateValue = it.voteAverage.toString()
-                ){
+                ) {
+                    it.title.log()
                     onClick.invoke(it)
                 }
             }

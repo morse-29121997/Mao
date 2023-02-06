@@ -18,7 +18,7 @@ class TvViewModel(private val repository: ITVRepository = TVRepository()) : View
     private val _nowPlaying = MutableSharedFlow<State>()
     val nowPlaying: Flow<State> get() = _nowPlaying
 
-    init {
+    fun load (){
         loadPopularTV()
         loadNowPlayingTV()
     }

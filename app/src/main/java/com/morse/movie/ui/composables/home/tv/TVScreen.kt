@@ -43,11 +43,15 @@ import com.morse.movie.ui.composables.home.shared.Loading
 import com.morse.movie.ui.composables.home.shared.MediaItem
 import com.morse.movie.ui.composables.home.shared.RatedMediaItem
 import com.morse.movie.ui.composables.home.shared.TVRatedMediaItem
+import com.morse.movie.utils.LoadFromVM
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
 fun TVsScreen(controller: NavHostController? = null, vm: TvViewModel = viewModel()) {
     val scrollable = rememberScrollState()
+    LoadFromVM(true) {
+        vm.load()
+    }
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()

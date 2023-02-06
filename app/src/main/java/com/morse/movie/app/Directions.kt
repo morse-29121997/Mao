@@ -1,6 +1,7 @@
 package com.morse.movie.app
 
 import androidx.navigation.*
+import com.morse.movie.utils.log
 
 const val ApplicationRoute = "Application-Route"
 const val HomeRoute = "Home-Route"
@@ -8,6 +9,7 @@ const val HomeRoute = "Home-Route"
 interface Directions {
     val name: String
     fun navigate(navigationController: NavHostController?): Unit? = null
+
     companion object {
         fun findDirection(routeName: String) = when (routeName) {
             SplashDirection.name -> SplashDirection
@@ -86,15 +88,16 @@ object MovieDetailsDirection : Directions {
     override val name: String
         get() = "MovieDetailsScreen/{movieId}"
     private var movieId: Int = 0
-    private val navigationName: String by lazy {
-        "MovieDetailsScreen/$movieId"
-    }
+    private val navigationName: String
+        get() = "MovieDetailsScreen/$movieId"
+
 
     fun injectMovieId(id: Int) {
         movieId = id
     }
 
     override fun navigate(navigationController: NavHostController?) {
+        navigationName.log()
         navigationController?.navigate(route = navigationName)
     }
 }
@@ -103,9 +106,8 @@ object TVDetailsDirection : Directions {
     override val name: String
         get() = "TV-Details-Screen/{tvId}"
     private var tvId: Int = 0
-    private val navigationName: String by lazy {
-        "TV-Details-Screen/${tvId}"
-    }
+    private val navigationName: String
+        get() =    "TV-Details-Screen/${tvId}"
 
     fun injectTVId(id: Int) {
         tvId = id

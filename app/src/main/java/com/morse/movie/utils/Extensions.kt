@@ -3,6 +3,7 @@ package com.morse.movie.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -39,6 +40,10 @@ private fun Modifier.backgroundModifier(isSelected: Boolean) = if (isSelected) {
     )
 } else {
     Modifier.background(Color.White)
+}
+
+fun String.log(){
+    Log.i("Mao-Trailer" , this)
 }
 
 fun Context.shareMedia(details: DetailsResponse) {

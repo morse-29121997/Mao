@@ -3,9 +3,12 @@ package com.morse.movie.ui.composables.home.profile
 import android.content.res.Configuration
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
@@ -30,6 +33,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import com.morse.movie.R
+import com.morse.movie.data.entities.ui.Statics
 import com.morse.movie.ui.composables.home.shared.Empty
 import com.morse.movie.utils.Constants
 
@@ -45,7 +49,9 @@ fun ProfileScreen(controller: NavHostController? = null) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val footer = createGuidelineFromTop(0.35F)
         val topGuideline = createGuidelineFromTop(0.05F)
-        val (profileTitle, settingIcon, background, nameBg, name, myPhoto, empty, like, watching, comments, items) = createRefs()
+        val (profileTitle, settingIcon, background, nameBg,
+            name, myPhoto, empty, statics
+                , items) = createRefs()
         val likesItems = arrayListOf<Int>()
         Image(
             painter = painterResource(id = R.drawable.profile_bg),
@@ -107,28 +113,31 @@ fun ProfileScreen(controller: NavHostController? = null) {
             Icon(Icons.Default.Settings, tint = Color.White, contentDescription = null)
         }
 
-        StaticsItem(modifier = Modifier.constrainAs(like) {
-            start.linkTo(parent.start, 10.dp)
-            end.linkTo(watching.start)
-            top.linkTo(background.bottom, 20.dp)
-        }, number = 3210, name = R.string.like, isSelected = false)
+        LazyRow(
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.constrainAs(statics) {
+                start.linkTo(parent.start, 10.dp)
+                end.linkTo(parent.end)
+                top.linkTo(background.bottom, 20.dp)
+                width = Dimension.fillToConstraints
+            }
+        ) {
+            items(Statics.Items) {
+                StaticsItem(
+                    number = it.value,
+                    name = it.title,
+                    isSelected = it.isSelected.value
+                ){
+                    Statics.unselectTab()
+                    Statics.selectTab(it)
+                }
+            }
+        }
 
-
-        StaticsItem(modifier = Modifier.constrainAs(watching) {
-            start.linkTo(like.end, 10.dp)
-            end.linkTo(comments.start)
-            linkTo(like.top, like.bottom)
-        }, number = 1231, name = R.string.watching, isSelected = true)
-
-
-        StaticsItem(modifier = Modifier.constrainAs(comments) {
-            start.linkTo(watching.end)
-            linkTo(like.top, like.bottom)
-            end.linkTo(parent.end, 10.dp)
-        }, number = 44, name = R.string.comment, isSelected = false)
         if (likesItems.isEmpty()) {
             Empty(modifier = Modifier.constrainAs(empty) {
-                linkTo(like.bottom, parent.bottom)
+                linkTo(statics.bottom, parent.bottom)
                 linkTo(parent.start, parent.end)
                 height = Dimension.fillToConstraints
                 width = Dimension.fillToConstraints
@@ -138,16 +147,20 @@ fun ProfileScreen(controller: NavHostController? = null) {
 
             }
         }
+
     }
 }
 
+
 @OptIn(ExperimentalUnitApi::class)
 @Composable
-fun StaticsItem(modifier: Modifier, number: Int, @StringRes name: Int, isSelected: Boolean) {
+fun StaticsItem(number: Int, @StringRes name: Int, isSelected: Boolean, onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .padding(5.dp)
-            .then(modifier),
+            .clickable {
+                onClick.invoke()
+            }
+            .padding(5.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
