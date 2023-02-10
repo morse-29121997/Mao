@@ -15,7 +15,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,10 +41,11 @@ import com.morse.movie.R
 import com.morse.movie.app.MovieDetailsDirection
 import com.morse.movie.data.entities.remote.MoviesResponse
 import com.morse.movie.data.entities.ui.State
+import com.morse.movie.ui.composables.home.shared.Error
 import com.morse.movie.ui.composables.home.shared.Loading
 import com.morse.movie.ui.composables.home.shared.MediaItem
 import com.morse.movie.ui.composables.home.shared.RatedMediaItem
-import com.morse.movie.utils.LoadFromVM
+import com.morse.movie.utils.ExecuteFromVM
 import com.morse.movie.utils.log
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 
@@ -59,7 +59,7 @@ fun PreviewMoviesScreen() {
 @Composable
 fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = viewModel()) {
     val scrollable = rememberScrollState()
-    LoadFromVM(true) {
+    ExecuteFromVM(true) {
         vm.load()
     }
     ConstraintLayout(
@@ -70,7 +70,7 @@ fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = vi
         val popular = vm.popular.collectAsState(initial = State.Loading)
         val now = vm.now.collectAsState(initial = State.Loading)
         val topGuideline = createGuidelineFromTop(0.05F)
-        val (moviesTitle, searchIcon, loading, scrollableContent) = createRefs()
+        val (moviesTitle, searchIcon, loading,error, scrollableContent) = createRefs()
         when {
             popular.value is State.Loading || now.value is State.Loading -> {
                 Loading(Modifier.constrainAs(loading) {
@@ -79,6 +79,18 @@ fun MoviesScreen(controller: NavHostController? = null, vm: MoviesViewModel = vi
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 })
+            }
+            popular.value is State.Error || now.value is State.Error -> {
+                Error(modifier = Modifier.constrainAs(error) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                } ) {
+                    vm.load()
+                }
             }
             else -> {
                 Text(
@@ -180,7 +192,7 @@ fun NowMovies(
         )
         Spacer(modifier = Modifier.height(10.dp))
         LazyRow(horizontalArrangement = Arrangement.SpaceBetween) {
-            items(nowMovies, key = {it.id}) {
+            items(nowMovies, key = { it.id }) {
                 MediaItem(imageUrl = it.getFullPosterPath(), name = it.title) {
                     it.title.log()
                     onClick.invoke(it)
@@ -212,7 +224,7 @@ fun PopularsMovies(
             contentPadding = PaddingValues(5.dp),
             modifier = Modifier.height(500.dp)
         ) {
-            items(popularMovies, key = {it.id}) {
+            items(popularMovies, key = { it.id }) {
                 RatedMediaItem(
                     imageUrl = it.getFullPosterPath(),
                     mediaName = it.title,

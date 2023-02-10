@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.UiMode
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.morse.movie.R
@@ -29,14 +31,18 @@ import com.morse.movie.ui.theme.Typography
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController? = null) {
+fun SplashScreen(navController: NavHostController? = null , vm : SplashViewModel = viewModel()) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (copyRight, appName, logoIcon) = createRefs()
         val topGuideline = createGuidelineFromTop(0.27F)
-
-        LaunchedEffect(true) {
+        val isStarted = vm.isStartedBefore.collectAsState(initial = false)
+        LaunchedEffect(isStarted) {
             delay(3000)
-            SplashDirection.navigate(navController)
+            if(isStarted.value) {
+                OnBoardingDirection.navigate(navController)
+            }else {
+                SplashDirection.navigate(navController)
+            }
         }
 
         Image(

@@ -5,6 +5,9 @@ import androidx.compose.ui.unit.dp
 object Constants {
     val regularImageWidth = 150.dp
     val regularImageHeight = 200.dp
+
+    val smallImageWidth = 75.dp
+    val smallImageHeight = 100.dp
     val ratedRegularImageHeight = 250.dp
     val tvImageWidth = 200.dp
     val tvImageHeight = 350.dp

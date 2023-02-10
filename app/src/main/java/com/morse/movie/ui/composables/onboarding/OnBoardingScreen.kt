@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -17,11 +18,15 @@ import com.google.accompanist.pager.rememberPagerState
 import com.morse.movie.app.OnBoardingDirection
 import com.morse.movie.data.entities.ui.OnboardButtonStatus
 import com.morse.movie.data.entities.ui.OnboardPageItem
+import com.morse.movie.utils.ExecuteFromVM
 import com.morse.movie.utils.execute
 
 @OptIn(ExperimentalUnitApi::class, ExperimentalPagerApi::class)
 @Composable
-fun OnBoardingScreen(navController: NavHostController? = null) {
+fun OnBoardingScreen(
+    navController: NavHostController? = null,
+    vm: OnBoardingViewModel = viewModel()
+) {
     ConstraintLayout {
         val scope = rememberCoroutineScope()
         val indicator = createRef()
@@ -35,6 +40,7 @@ fun OnBoardingScreen(navController: NavHostController? = null) {
             PageItem(page = currentPage) {
                 when (it.buttonStatus) {
                     OnboardButtonStatus.GetStarted -> {
+                        vm.toggle()
                         OnBoardingDirection.navigate(navController)
                     }
                     else -> {

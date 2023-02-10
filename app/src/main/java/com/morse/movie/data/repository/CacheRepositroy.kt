@@ -2,8 +2,10 @@ package com.morse.movie.data.repository
 
 import com.codelab.android.datastore.MediaItem
 import com.morse.movie.app.instance
+import com.morse.movie.data.entities.ui.State
 import com.morse.movie.local.LocalDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 interface ICacheRepository {
 
@@ -18,8 +20,8 @@ interface ICacheRepository {
     suspend fun removeStaredMediaItem(itemId: Int)
     fun isLiked(itemId: Int): Flow<Boolean>
     fun isStared(itemId: Int): Flow<Boolean>
-    fun loadLikedMediaItems(): Flow<List<MediaItem>>
-    fun loadStaredMediaItems(): Flow<List<MediaItem>>
+    fun loadLikedMediaItems(): Flow<State>
+    fun loadStaredMediaItems(): Flow<State>
 }
 
 class CacheRepository(private val cache: LocalDataStore = instance) : ICacheRepository {
@@ -50,7 +52,11 @@ class CacheRepository(private val cache: LocalDataStore = instance) : ICacheRepo
 
     override fun isStared(itemId: Int): Flow<Boolean> = cache.isStared(itemId)
 
-    override fun loadLikedMediaItems(): Flow<List<MediaItem>> = cache.loadLikedMediaItems()
+    override fun loadLikedMediaItems(): Flow<State> = cache.loadLikedMediaItems().map {
+        State.Success(it)
+    }
 
-    override fun loadStaredMediaItems(): Flow<List<MediaItem>> = cache.loadStaredMediaItems()
+    override fun loadStaredMediaItems(): Flow<State> = cache.loadStaredMediaItems().map {
+        State.Success(it)
+    }
 }

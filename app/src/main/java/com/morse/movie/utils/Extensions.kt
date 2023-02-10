@@ -63,11 +63,12 @@ fun Context.openYoutubeTrailer(id: Int) {
 
 
 @Composable
-fun LoadFromVM(key: Any, execute: () -> Unit) {
+fun ExecuteFromVM(key: Any, execute: () -> Unit) {
     LaunchedEffect(key) {
         execute.invoke()
     }
 }
+
 
 fun <Result, MapResult> BaseRepository.execute(
     executionApi: suspend () -> Response<Result>,

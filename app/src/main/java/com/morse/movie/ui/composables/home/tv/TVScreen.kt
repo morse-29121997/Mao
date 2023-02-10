@@ -1,13 +1,8 @@
 package com.morse.movie.ui.composables.home.tv
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.IconButton
@@ -18,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -33,23 +27,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.morse.movie.R
 import com.morse.movie.app.TVDetailsDirection
-import com.morse.movie.data.entities.remote.MoviesResponse
 import com.morse.movie.data.entities.remote.TVResponse
 import com.morse.movie.data.entities.ui.State
-import com.morse.movie.ui.composables.home.movies.ADSBanner
-import com.morse.movie.ui.composables.home.movies.NowMovies
-import com.morse.movie.ui.composables.home.movies.PopularsMovies
+import com.morse.movie.ui.composables.home.shared.Error
 import com.morse.movie.ui.composables.home.shared.Loading
 import com.morse.movie.ui.composables.home.shared.MediaItem
-import com.morse.movie.ui.composables.home.shared.RatedMediaItem
 import com.morse.movie.ui.composables.home.shared.TVRatedMediaItem
-import com.morse.movie.utils.LoadFromVM
+import com.morse.movie.utils.ExecuteFromVM
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
 fun TVsScreen(controller: NavHostController? = null, vm: TvViewModel = viewModel()) {
     val scrollable = rememberScrollState()
-    LoadFromVM(true) {
+    ExecuteFromVM(true) {
         vm.load()
     }
     ConstraintLayout(
@@ -58,7 +48,7 @@ fun TVsScreen(controller: NavHostController? = null, vm: TvViewModel = viewModel
 
     ) {
         val topGuideline = createGuidelineFromTop(0.05F)
-        val (tvTitle, searchIcon, loading, scrollableContent) = createRefs()
+        val (tvTitle, searchIcon, loading , error, scrollableContent) = createRefs()
         val nowPlaying = vm.nowPlaying.collectAsState(initial = State.Loading)
         val popular = vm.popular.collectAsState(initial = State.Loading)
         when {
@@ -69,6 +59,18 @@ fun TVsScreen(controller: NavHostController? = null, vm: TvViewModel = viewModel
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 })
+            }
+            popular.value is State.Error || nowPlaying.value is State.Error -> {
+                Error(modifier = Modifier.constrainAs(error) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                } ) {
+                    vm.load()
+                }
             }
             else -> {
                 Text(

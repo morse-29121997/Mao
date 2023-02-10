@@ -7,6 +7,7 @@ message MediaItem {
   string title = 1;
   int32 id = 2;
   string poster = 3;
+  bool isMovie = 4;
 }
 
 message MediaItems {

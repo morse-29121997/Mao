@@ -11,9 +11,11 @@ data class DetailsResponse(
     val popularity: Double,
     val vote_average: Double,
     val video: Boolean,
-    val backdrop_path: String
+    val backdrop_path: String ,
+    val poster_path : String
 ) {
     fun getBackgroundImage() = "${Constants.imageApiBackground}/$backdrop_path"
+    fun getForegroundImage() = "${Constants.imageApiPoster}/$poster_path"
     fun getVoteDecimal() = vote_average.toString().split('.').first()
     fun getVoteFraction() = ".${vote_average.toString().split('.').last()}"
 }

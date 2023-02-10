@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
@@ -106,6 +107,59 @@ fun Loading(modifier: Modifier) {
         color = Color(0XFFF89A04), strokeWidth = 5.dp
     )
 }
+
+
+@Preview(showSystemUi = true)
+@Composable
+fun ShowErrorLayout() {
+    Error(Modifier) {
+
+    }
+}
+
+@OptIn(ExperimentalUnitApi::class)
+@Composable
+fun Error(modifier: Modifier, onRetry: () -> Unit) {
+    Column(
+        modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.error),
+            contentDescription = null,
+            modifier = Modifier.fillMaxWidth()
+
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(id = R.string.errorMessage),
+            color = Color.Black,
+            style = MaterialTheme.typography.h1,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center ,
+            fontSize = TextUnit(
+                15F,
+                TextUnitType.Sp
+            )
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(onClick = {onRetry.invoke()} , colors = ButtonDefaults.buttonColors(backgroundColor = Color(0XFFFD7624))) {
+            Text(
+                text = stringResource(id = R.string.retry),
+                color = Color.White,
+                style = MaterialTheme.typography.h1,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center ,
+                fontSize = TextUnit(
+                    15F,
+                    TextUnitType.Sp
+                )
+            )
+        }
+    }
+}
+
 
 @OptIn(ExperimentalUnitApi::class)
 @Composable
@@ -343,7 +397,10 @@ fun ConstraintLayoutScope.RenderDetails(
     onBackPressed: () -> Unit,
     detailsModel: DetailsResponse,
     castModel: ArrayList<CastResponse.Cast>,
-    actionsStatus: MediaActionsStatus = MediaActionsStatus()
+    actionsStatus: MediaActionsStatus = MediaActionsStatus(),
+    onLikedPressed: (Boolean) -> Unit,
+    onStaredPressed: (Boolean) -> Unit,
+    onCommentedPressed: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     val topGuideline = createGuidelineFromTop(0.05F)
@@ -509,7 +566,10 @@ fun ConstraintLayoutScope.RenderDetails(
     }, castModel)
 
     DetailsAction(
-        onClick = { actionsStatus.liked.value = actionsStatus.liked.value.not() },
+        onClick = {
+            actionsStatus.liked.value = actionsStatus.liked.value.not()
+            onLikedPressed.invoke(actionsStatus.liked.value)
+        },
         modifier = Modifier
             .constrainAs(likeFab) {
                 bottom.linkTo(parent.bottom, 10.dp)
@@ -522,7 +582,10 @@ fun ConstraintLayoutScope.RenderDetails(
     )
 
     DetailsAction(
-        onClick = { actionsStatus.stared.value = actionsStatus.stared.value.not() },
+        onClick = {
+            actionsStatus.stared.value = actionsStatus.stared.value.not()
+            onStaredPressed.invoke(actionsStatus.stared.value)
+        },
         modifier = Modifier
             .constrainAs(starFab) {
                 bottom.linkTo(parent.bottom, 10.dp)
@@ -534,7 +597,10 @@ fun ConstraintLayoutScope.RenderDetails(
     )
 
     DetailsAction(
-        onClick = { actionsStatus.comments.value = actionsStatus.comments.value.not() },
+        onClick = {
+            actionsStatus.comments.value = actionsStatus.comments.value.not()
+            onCommentedPressed.invoke(actionsStatus.comments.value)
+        },
         modifier = Modifier
             .constrainAs(commentsFab) {
                 bottom.linkTo(parent.bottom, 10.dp)

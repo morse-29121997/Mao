@@ -20,4 +20,7 @@
     <string name="back">Back</string>
     <string name="full_cast_and_crew"><![CDATA[Full Cast & Crew]]></string>
     <string name="people_watching"> $1%s People wathing</string>
+    <string name="stared">Star</string>
+    <string name="errorMessage">* Unforunatlly we can`t load the information that you called may be there an issue in network , feel free to try again later</string>
+    <string name="retry">Retry</string>
 </resources>
