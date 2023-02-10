@@ -11,7 +11,7 @@ interface IDetailsRepository : BaseRepository {
     fun loadMovieDetails(movieId: Int): Flow<State>
     fun loadMovieCredits(movieId: Int): Flow<State>
     fun loadTVDetails(tvId: Int): Flow<State>
-    fun loadTVSSimilar(tvId: Int): Flow<State>
+    fun loadTVSCredits(tvId: Int): Flow<State>
 
 }
 
@@ -30,7 +30,7 @@ class DetailsRepository(private val api: MaoApis = RetrofitBuilder.getMaoAPI()) 
         api.getTVDetails(tvId)
     }
 
-    override fun loadTVSSimilar(tvId: Int): Flow<State> = executeState {
-        api.getTVSSimilar(tvId)
+    override fun loadTVSCredits(tvId: Int): Flow<State> = executeState {
+        api.getTVSCredits(tvId)
     }
 }

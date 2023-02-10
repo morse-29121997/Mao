@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option java_package = "com.codelab.android.datastore";
+option java_multiple_files = true;
+
+message MediaItem {
+  string title = 1;
+  int32 id = 2;
+  string poster = 3;
+}
+
+message MediaItems {
+  repeated MediaItem items = 1;
+}
+
+message Config {
+  bool isGetStarted = 1;
+}

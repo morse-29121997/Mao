@@ -23,7 +23,7 @@ object RetrofitBuilder {
 
     private fun createRetrofit(): Retrofit {
         val gson = GsonBuilder().disableHtmlEscaping()
-        return Retrofit.Builder().baseUrl("https://api.themoviedb.org/3/").apply {
+        return Retrofit.Builder().baseUrl("https://api.themoviedb.org/").apply {
             addConverterFactory(GsonConverterFactory.create(gson.create()))
             addCallAdapterFactory(CoroutineCallAdapterFactory())
             client(getClientOkHttpInstance())

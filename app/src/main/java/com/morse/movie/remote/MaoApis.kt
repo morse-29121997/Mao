@@ -11,28 +11,28 @@ import retrofit2.http.Path
 
 interface MaoApis {
 
-    @GET("movie/now_playing?api_key=${Constants.apiKey}&language=en-US&page=1")
+    @GET("3/movie/now_playing?api_key=${Constants.apiKey}&language=en-US&page=1")
     suspend fun getNowMovie(): Response<MoviesResponse>
 
-    @GET("movie/top_rated?api_key=${Constants.apiKey}&language=en-US&page=1")
+    @GET("3/movie/top_rated?api_key=${Constants.apiKey}&language=en-US&page=1")
     suspend fun getPopularMovie(): Response<MoviesResponse>
 
-    @GET("tv/popular?api_key=${Constants.apiKey}&language=en-US&page=1")
+    @GET("3/tv/popular?api_key=${Constants.apiKey}&language=en-US&page=1")
     suspend fun getPopularTv(): Response<TVResponse>
 
-    @GET("tv/top_rated?api_key=${Constants.apiKey}&language=en-US&page=1")
+    @GET("3/tv/top_rated?api_key=${Constants.apiKey}&language=en-US&page=1")
     suspend fun getNowPlayingTv(): Response<TVResponse>
 
-    @GET("movie/{movieId}?api_key=${Constants.apiKey}&language=en-US")
+    @GET("3/movie/{movieId}?api_key=${Constants.apiKey}&language=en-US")
     suspend fun getMovieDetails(@Path("movieId") movieId: Int): Response<DetailsResponse>
 
-    @GET("movie/{movieId}/credits?api_key=${Constants.apiKey}&language=en-US")
+    @GET("3/movie/{movieId}/credits?api_key=${Constants.apiKey}&language=en-US")
     suspend fun getMovieCredits(@Path("movieId") movieId: Int): Response<CastResponse>
 
-    @GET("tv/{tvId}?api_key=${Constants.apiKey}&language=en-US")
+    @GET("3/tv/{tvId}?api_key=${Constants.apiKey}&language=en-US")
     suspend fun getTVDetails(@Path("tvId") tvId: Int): Response<DetailsResponse>
 
-    @GET("/tv/{tvId}/similar?api_key=${Constants.apiKey}&language=en-US&page=1")
-    suspend fun getTVSSimilar(@Path("tvId") tvId: Int): Response<TVResponse>
+    @GET("3/tv/{tvId}/credits?api_key=${Constants.apiKey}&language=en-US&page=1")
+    suspend fun getTVSCredits(@Path("tvId") tvId: Int): Response<CastResponse>
 
 }

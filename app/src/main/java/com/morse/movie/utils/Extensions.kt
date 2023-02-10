@@ -42,8 +42,8 @@ private fun Modifier.backgroundModifier(isSelected: Boolean) = if (isSelected) {
     Modifier.background(Color.White)
 }
 
-fun String.log(){
-    Log.i("Mao-Trailer" , this)
+fun String.log() {
+    Log.i("Mao-Trailer", this)
 }
 
 fun Context.shareMedia(details: DetailsResponse) {
@@ -56,6 +56,11 @@ fun Context.shareMedia(details: DetailsResponse) {
         Intent.createChooser(shareIntent, "Share With")
     )
 }
+
+fun Context.openYoutubeTrailer(id: Int) {
+
+}
+
 
 @Composable
 fun LoadFromVM(key: Any, execute: () -> Unit) {

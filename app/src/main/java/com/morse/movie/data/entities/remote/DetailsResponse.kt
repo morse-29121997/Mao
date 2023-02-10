@@ -4,8 +4,9 @@ import com.google.gson.annotations.SerializedName
 import com.morse.movie.utils.Constants
 
 data class DetailsResponse(
-    @SerializedName("title" , alternate = ["name"])
+    @SerializedName("title", alternate = ["name"])
     val title: String,
+    val id: Int,
     val overview: String,
     val popularity: Double,
     val vote_average: Double,

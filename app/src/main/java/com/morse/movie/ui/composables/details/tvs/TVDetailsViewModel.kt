@@ -40,12 +40,12 @@ class TVDetailsViewModel(
     private val _details = MutableSharedFlow<State>()
     val details: Flow<State> get() = _details
 
-    private val _similars = MutableSharedFlow<State>()
-    val similars: Flow<State> get() = _similars
+    private val _credits = MutableSharedFlow<State>()
+    val credits: Flow<State> get() = _credits
 
     fun load (id : Int){
         loadTVDetails(id)
-        loadTVSSimilars(id)
+        loadTVSCredits(id)
     }
 
     private fun loadTVDetails(id: Int) {
@@ -54,9 +54,9 @@ class TVDetailsViewModel(
             .launchIn(viewModelScope)
     }
 
-    private fun loadTVSSimilars(id: Int) {
-        repository.loadTVSSimilar(id)
-            .onEach { _similars.emit(it) }
+    private fun loadTVSCredits(id: Int) {
+        repository.loadTVSCredits(id)
+            .onEach { _credits.emit(it) }
             .launchIn(viewModelScope)
     }
 

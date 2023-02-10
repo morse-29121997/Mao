@@ -9,6 +9,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_mao_trailer_laucnher"
         android:label="@string/app_name"
+        android:name=".app.MaoApplication"
         android:roundIcon="@mipmap/ic_mao_trailer_laucnher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Movie"
